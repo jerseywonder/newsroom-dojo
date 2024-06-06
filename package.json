@@ -1,6 +1,6 @@
 {
   "name": "@jerseywonder/newsroom-dojo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/newsroom-dojo.cjs.js",
   "module": "dist/newsroom-dojo.esm.js",
