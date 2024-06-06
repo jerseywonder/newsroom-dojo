@@ -89,5 +89,56 @@ export default [
       terser(),
       json()
     ]
+  },
+  {
+    input: 'src/objects/index.js',
+    output: [
+      {
+        file: 'dist/objects/index.js',
+        format: 'es',
+        name: 'objects'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
+  },
+  {
+    input: 'src/gis/index.js',
+    output: [
+      {
+        file: 'dist/gis/index.js',
+        format: 'es',
+        name: 'gis'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
+  },
+  {
+    input: 'src/guardian/index.js',
+    output: [
+      {
+        file: 'dist/guardian/index.js',
+        format: 'es',
+        name: 'guardian'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
   }
 ];

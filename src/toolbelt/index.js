@@ -1,55 +1,36 @@
+/**
+ * Fetches JSON data from a given URL.
+ *
+ * @param {string} url - The URL to fetch the JSON data from.
+ * @returns {Promise<Object>} - A promise that resolves to the JSON data.
+ */
 export function getJson(url) {
-  return fetch(`${url}`).then(r => r.json())
+  return fetch(url)
+    .then(response => response.json());
 }
 
 /**
- * Checks if the atom is inside an iframe and does a risize
+ * Retrieves the value of a URL parameter by name.
  *
- * @param {string} - The element containing the content (By default it is #gv-atom)
+ * @param {string} paramName - The name of the URL parameter to retrieve.
+ * @returns {string|null} - The value of the URL parameter, or null if not found.
  */
-
-export function resizeIframe(elem="#gv-atom") {
-  if (window.frameElement) {
-    const target = document.querySelector(elem);
-
-    console.log("Inside version 1.1");
-
-    // Post message to parent window to adjust the height
-    window.parent.postMessage({
-      sentinel: 'amp',
-      type: 'embed-size',
-      height: document.body.scrollHeight
-    }, '*');
-
-    // Hide the overflow to avoid scrollbars
-    document.body.style.overflow = 'hidden';
-
-    // Set the initial height of the iframe
-    window.frameElement.height = target.offsetHeight;
-
-    // Function to detect height changes of an element
-    function onElementHeightChange(elm, callback) {
-      let lastHeight = elm.clientHeight;
-      let newHeight;
-      (function run() {
-        newHeight = elm.clientHeight;
-        if (lastHeight !== newHeight) callback();
-        lastHeight = newHeight;
-
-        if (elm.onElementHeightChangeTimer) {
-          clearTimeout(elm.onElementHeightChangeTimer);
-        }
-        elm.onElementHeightChangeTimer = setTimeout(run, 200);
-      })();
-    }
-
-    // Watch for changes in the body's height
-    onElementHeightChange(document.body, function() {
-      window.frameElement.height = target.offsetHeight;
-    });
+export function getURLParams(paramName) {
+  let params;
+  if (top !== self) {
+    params = window.location.search.substring(1).split("&");
+  } else {
+    params = window.parent.location.search.substring(1).split("&");
   }
-}
 
+  for (let i = 0; i < params.length; i++) {
+    const [key, value] = params[i].split("=");
+    if (key === paramName) {
+      return value;
+    }
+  }
+  return null;
+}
 
 /**
  * Renders a Mustache template with the given context.
