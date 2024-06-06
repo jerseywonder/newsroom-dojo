@@ -1,1 +1,649 @@
-import{timeParse as e,timeFormat as t}from"d3-time-format";const n=/,|%|[$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/g;async function r(e){let t={rows:[],cols:[]};var n;t.head=Object.keys(e[0]),t.rows=function(e){if(!e||!Array.isArray(e)||0===e.length)return[];const t=Object.keys(e[0]),n=e.map((e=>t.map((t=>e[t]))));return n.unshift(t),n}(e),t.cols=(n=t.rows)[0].map(((e,t)=>n.map((e=>e[t])))),t.body=t.rows.slice(1);const{cols:r,rows:a}=t;let c={};return c.type=await s(r),u({...t,...c})}const s=async e=>e.map(((e,t)=>{let n=a(e.slice(1),"body").types;t>0&&(n=n.filter((e=>"date"!==e)));let r=[];return n.forEach((t=>{let n={status:!1};"number"===t&&(n=i(e.slice(1))),"string"===t&&(n=v(e.slice(1))),"date"===t&&(n=d(e.slice(1))),r.push({type:t,format:{...n}})})),{list:n,format:r}}));function u(e){const{head:t,type:n,rows:r,body:s}=e;return t.map(((e,t)=>({column:e,index:t,label:e,dataTypes:n[t].list,formats:n[t].format})))}function a(e="",t){let n={types:[]},r="body"===t?e.filter((e=>e)):e;const s=function(e){const t=y(e)||p(e)||m(e,l)||h(e)||g(e);return{valid:!!t}}(r);s.valid&&n.types.push("date");const u=c(r);if(u.valid&&n.types.push("number"),!u.format&&"number"!==n.types.join()){(a=r,a.filter(((e,t)=>t===a.indexOf(e)))).length;r.length,n.types.push("string")}var a;return n.types.sort(),n}function c(e){let t=e.map((e=>("string"==typeof e&&(e=e.replace(n,"")),""===e?NaN:e))).filter((e=>!isNaN(e))).map((e=>parseFloat(e)));return{valid:t.length===e.filter((e=>""!==e)).length,values:t}}function o(e){if(e.length<2)return!0;e.sort(((e,t)=>e-t));const t=e[1]-e[0];for(let n=2;n<e.length;n++)if(e[n]-e[n-1]!==t)return!1;return!0}function i(e){let t=c(e).values;return{min:Math.min(...t),max:Math.max(...t),scale:M(t),hasEmptyValues:t.length!=e.length,sequential:o(t)}}const l=["%d-%b-%y","%d %b %Y","%d %b","%d-%B-%y","%d %B %Y","%d %B","%Y-%m-%d","%Y-%m-%dT%H:%M:%S%Z","%m/%d/%y %H:%M","%m/%d/%y %I:%M %p","%H:%M:%S","%b-%y","%b %y","%Y %b","%b %Y","%B-%y","%B %y","%Y %B","%B %Y","%Y-%y","%Y/%y","%b","%B"],f=["%m/%d/%y","%m/%d/%Y"];function d(e){const t=y(e)||p(e)||m(e,l)||h(e)||g(e),n=t.includes("%d")||t.includes("%H");return{dateFormat:t,hasDay:n,scale:M(e)}}function m(t,n){let r,s=n.find((n=>(r=e(n),r(t[0]))));return s&&t.every((e=>r(e)))?s:""}function y(e){let t=m(e,f);if(t){const n=e.every((e=>e.split("/")[0]<=12)),r=e.some((e=>e.split("/")[1]>12));t=n&&r?t:"%d/%m/"+t.slice(-2),n&&!r&&console.warn("Format unclear!!!")}return t||""}function p(e){const t="%Y",n=m(e,[t])===t,r=e.every((e=>4===e.length));return n&&r?t:""}function h(e){const t=e.every((e=>("Q"===e[0]||"Q"===e[5])&&7===e.length)),n="%Y"===m(e.map((e=>e.replace(/Q([1-4])/g,"").trim())),["%Y"]);return t&&n?"Q*":""}function g(e){const t="%Y%m%d",n=m(e,[t])===t,r=e.every((e=>{const t=e.slice(4,6);return t>=1&&t<=12})),s=e.every((e=>{const t=e.slice(6);return t>=1&&t<=31}));return n&&r&&s?t:""}function b(t,n,r,s=!1){let u;const a=e=>t.map((t=>e(t)));switch(!0){case["%Y"].includes(n):return t.map((e=>+e));case["Q*"].includes(n):{const e=t[0].indexOf("Q");return t.map((t=>+t.replace(/Q([1-4])/g,"").trim()+.25*(+t[e+1]-1)))}case["%Y-%y","%Y/%y"].includes(n):return t.map((e=>+e.slice(0,4)));case["%b","%B"].includes(n):return u=e(s?"%b":n),a(u).map((e=>e.getMonth()));case!r:return u=e(s?"%b %Y":n),a(u).map((e=>e.getFullYear()+e.getMonth()/12));default:return u=e(n),a(u)}}function Y(e,n,r){const s=e.toString().split(".")[0],u=e%1;let a,c,o;switch(!0){case["%Y"].includes(n):return e.toString();case["Q*"].includes(n):return"Q"+(e%1*4+1)+" "+s;case["%Y-%y","%Y/%y"].includes(n):return e+"-"+(e+1).toString().slice(-2);case["%b","%B"].includes(n):return a=new Date(2017,e),o=t("%b"),o(a);case!r:return c=Math.round(parseFloat(12*u)),a=new Date(s,c||0),o=t("%b %Y"),o(a);default:return null}}function F(e){const t=e[1].getFullYear()-e[0].getFullYear(),n=e[1].getMonth()-e[0].getMonth(),r=e[1].getDate()-e[0].getDate(),s=e[1].getHours()-e[0].getHours();switch(!0){case t>4:return"%Y";case t>0:return"%b %Y";case n>4:return"%b";case n>0:return"%d %b";case r>0:return"%d %I%p";case s>0:return"%H:%M";default:return console.error("A new time format is required!"),""}}function v(e){return{hasRepeat:B(e),longest:w(e),scale:M(e)}}function w(e){if(0===e.length)return 0;let t=0;for(const n of e)n.length>t&&(t=n.length);return t}function B(e){const t=new Set;for(const n of e){if(t.has(n))return!0;t.add(n)}return!1}function M(e){if(!Array.isArray(e)||0===e.length)return"Invalid data";const t=e[0],n=e.every((e=>"number"==typeof e)),r=e.every((e=>e instanceof Date)),s=e.some((e=>e<0)),u=new Set(e).size;if(r)return"scaleTime";if(n){if(s)return"scaleLinear";return Math.max(...e)/Math.min(...e)>1e3?"scaleLog":"scaleLinear"}return"string"!=typeof t&&n?"Unknown scale type":u===e.length?"scaleOrdinal":"scaleBand"}function x(e,t){if(e.length!==t.length)return e;const n=e.map((e=>e.column));if(!t.every((e=>n.includes(e))))return e;const r=t.map((t=>e.find((e=>e.column===t))));return r.forEach(((e,t)=>{e.index=t})),r.sort(((e,t)=>e.index-t.index)),r}export{Y as dateNumToTxt,M as determineD3ScaleType,a as getDataTypeAnalysis,d as getDateFormatting,b as getDateScaleValues,F as getDateTextFormat,i as getNumberFormatting,v as getStringFormatting,u as processJsonData,r as schema,x as sortJsonByColumnOrder};
+import { timeParse, timeFormat } from 'd3-time-format';
+const regexNumFormats = /,|%|[$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/g;
+const regexCurrencies = /[$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/g;
+
+/**
+ * Analyzes json data and generates a schema to make generating graphics, charts and tables from the data a bit easier.
+ *
+ * @param {Array} data - The input data array of objects.
+ * @returns {Object} - The generated schema containing column names and data types, as well as useful info relating to the column (min, max values, date format and that kind of thing).
+ */
+export async function schema(data) {
+    let dataTableRaw = {
+        rows: [], // Data rows
+        cols: []  // Column names
+    };
+
+    // Get column names from the first object in the data array
+    dataTableRaw.head = Object.keys(data[0]);
+    dataTableRaw.rows = convertJSONToArrayOfRows(data);
+    dataTableRaw.cols = swapArray(dataTableRaw.rows);
+    dataTableRaw.body = dataTableRaw.rows.slice(1);
+
+    const { cols, rows } = dataTableRaw;
+
+    let dataTableDraw = {};
+
+    // Analyze data types for columns ... This is where the magic happens
+    dataTableDraw.type = await getDataTypesForColumns(cols);
+
+    console.log(dataTableDraw)
+
+    return processJsonData({
+        ...dataTableRaw,
+        ...dataTableDraw
+    })
+}
+
+/**
+ * Processes the given JSON data and returns a schema
+ *
+ * @param {Object} jsonData - The input JSON data.
+ * @returns {Array} - An array of objects with keys: column, list, and format.
+ */
+export function processJsonData(jsonData) {
+  const { head, type, rows, body } = jsonData;
+  
+  // Initialize the result array
+  const result = head.map((column, index) => {
+
+    return {
+      column,
+      index,
+      label : column,
+      dataTypes: type[index].list,
+      formats : type[index].format
+    };
+  });
+
+  return result;
+}
+
+/**
+ * Analyzes data and identifies its types.
+ *
+ * @param {Array|string} dataArr - The input data array or string.
+ * @param {string} src - The source of the data, typically "body".
+ * @returns {Object} - The analysis of the data, including identified types and formats.
+ */
+export function getDataTypeAnalysis(dataArr = "", src) {
+
+  let data = { types: [] };
+  let dataClean = src === "body" ? dataArr.filter(data => data) : dataArr;
+
+  /* Date format analysis */
+  const dataDate = getDateAnalysis(dataClean);
+  if (dataDate.valid) {
+    data.types.push("date");
+  }
+
+  /* Number format analysis */
+  const dataNumber = getNumberAnalysis(dataClean);
+
+  if (dataNumber.valid) {
+    data.types.push("number");
+  }
+
+  /* String format analysis */
+  if (!dataNumber.format && data.types.join() !== "number") {
+    const uniqueLen = uniqueArray(dataClean).length;
+    const hasRepeat = dataClean.length !== uniqueLen;
+    data.types.push("string");
+  }
+
+  // Data type priority: 1. date -> 2. number -> 3. string*
+  data.types.sort();
+  return data;
+}
+
+/**
+ * Removes duplicates from an array.
+ *
+ * @param {Array} arr - The input array.
+ * @returns {Array} - The array with duplicates removed.
+ */
+function uniqueArray(arr) {
+  return arr.filter((d, i) => i === arr.indexOf(d));
+}
+
+/**
+ * Analyzes the format of numeric data.
+ *
+ * @param {Array} data - The input data array.
+ * @returns {Object} - The analysis of the numeric data.
+ */
+function getNumberAnalysis(data) {
+
+  // Map through data to handle currency and empty values
+  let values = data
+    .map(d => {
+      // Remove currency symbols
+      if (typeof d === 'string') {
+        d = d.replace(regexNumFormats, "");
+      }
+      // If value is empty, treat it as NaN
+      if (d === "") {
+        return NaN;
+      }
+      return d;
+    })
+    .filter(d => !isNaN(d)) // Filter out non-number values
+    .map(d => parseFloat(d)); // Convert remaining string values to numbers
+
+  // Check if all non-empty values are numbers
+  let isNumber = values.length === data.filter(d => d !== "").length;
+
+  return {
+    valid: isNumber,
+    values: values
+  };
+}
+
+/**
+ * Checks if the numbers in an array are equally spaced apart.
+ * 
+ * @param {number[]} arr - The array of numbers to check.
+ * @returns {boolean} - Returns true if the numbers are equally spaced apart, false otherwise.
+ */
+function arithmeticSequenceCheck(arr) {
+  if (arr.length < 2) return true;
+
+  // Sort the array in ascending order
+  arr.sort((a, b) => a - b);
+
+  // Calculate the common difference
+  const difference = arr[1] - arr[0];
+
+  // Check if each subsequent number maintains the same difference
+  for (let i = 2; i < arr.length; i++) {
+    if (arr[i] - arr[i - 1] !== difference) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
+export function getNumberFormatting(data) {
+    
+  let values = getNumberAnalysis(data).values
+
+  return {
+    min : Math.min(...values),
+    max : Math.max(...values),
+    scale : determineD3ScaleType(values),
+    hasEmptyValues : values.length == data.length ? false : true,
+    sequential : arithmeticSequenceCheck(values)
+  };
+}
+
+const formatList = [
+  "%d-%b-%y", "%d %b %Y", "%d %b", "%d-%B-%y", "%d %B %Y", "%d %B",
+  "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S%Z", "%m/%d/%y %H:%M", "%m/%d/%y %I:%M %p",
+  "%H:%M:%S", "%b-%y", "%b %y", "%Y %b", "%b %Y", "%B-%y", "%B %y",
+  "%Y %B", "%B %Y", "%Y-%y", "%Y/%y", "%b", "%B"
+];
+
+const formatSp1 = [
+  "%m/%d/%y", "%m/%d/%Y"
+];
+
+/**
+ * Analyzes the format of date data.
+ *
+ * @param {Array} data - The input data array.
+ * @returns {Object} - The analysis of the date data.
+ */
+function getDateAnalysis(data) {
+  const dateFormat =
+    testDateFormatSp1(data) ||
+    testDateFormatSp2(data) ||
+    testDateFormats(data, formatList) ||
+    testDateFormatSp3(data) ||
+    testDateFormatSp4(data);
+
+  return {
+    valid: !!dateFormat
+  };
+}
+
+export function getDateFormatting(data) {
+  const dateFormat =
+    testDateFormatSp1(data) ||
+    testDateFormatSp2(data) ||
+    testDateFormats(data, formatList) ||
+    testDateFormatSp3(data) ||
+    testDateFormatSp4(data);
+
+  const dateHasDay = dateFormat.includes("%d") || dateFormat.includes("%H");
+
+  return {
+    dateFormat: dateFormat,
+    hasDay: dateHasDay,
+    scale : determineD3ScaleType(data)
+  };
+}
+
+
+/**
+ * Tests multiple date formats.
+ *
+ * @param {Array} data - The input data array.
+ * @param {Array} formats - The list of formats to test.
+ * @returns {string} - The matched date format.
+ */
+function testDateFormats(data, formats) {
+  let dateParser;
+  let dateFormat = formats.find(f => {
+    dateParser = timeParse(f);
+    return dateParser(data[0]);
+  });
+
+  return dateFormat && data.every(d => dateParser(d)) ? dateFormat : "";
+}
+
+/**
+ * Tests specific date formats (sp1).
+ *
+ * @param {Array} data - The input data array.
+ * @returns {string} - The matched date format.
+ */
+function testDateFormatSp1(data) {
+  let format = testDateFormats(data, formatSp1);
+  if (format) {
+    const isMonthFirst = data.every(d => d.split("/")[0] <= 12);
+    const isDaySecond = data.some(d => d.split("/")[1] > 12);
+    format = isMonthFirst && isDaySecond ? format : "%d/%m/" + format.slice(-2);
+
+    if (isMonthFirst && !isDaySecond) console.warn("Format unclear!!!");
+  }
+  return format ? format : "";
+}
+
+/**
+ * Tests specific date formats (sp2).
+ *
+ * @param {Array} data - The input data array.
+ * @returns {string} - The matched date format.
+ */
+function testDateFormatSp2(data) {
+  const format = "%Y";
+  const isYear = testDateFormats(data, [format]) === format;
+  const is4Digits = data.every(d => d.length === 4);
+  return isYear && is4Digits ? format : "";
+}
+
+/**
+ * Tests specific date formats (sp3).
+ *
+ * @param {Array} data - The input data array.
+ * @returns {string} - The matched date format.
+ */
+function testDateFormatSp3(data) {
+  const isSp3 = data.every(d => (d[0] === "Q" || d[5] === "Q") && d.length === 7);
+  const dataYear = data.map(d => d.replace(/Q([1-4])/g, "").trim());
+  const isYear = testDateFormats(dataYear, ["%Y"]) === "%Y";
+  return isSp3 && isYear ? "Q*" : "";
+}
+
+/**
+ * Tests specific date formats (sp4).
+ *
+ * @param {Array} data - The input data array.
+ * @returns {string} - The matched date format.
+ */
+function testDateFormatSp4(data) {
+  const format = "%Y%m%d";
+  const isYmd = testDateFormats(data, [format]) === format;
+  const isMonth = data.every(ymd => {
+    const m = ymd.slice(4, 6);
+    return m >= 1 && m <= 12;
+  });
+  const isDay = data.every(ymd => {
+    const d = ymd.slice(6);
+    return d >= 1 && d <= 31;
+  });
+  return isYmd && isMonth && isDay ? format : "";
+}
+
+/**
+ * Converts dates to scale values.
+ *
+ * @param {Array} dates - The input dates array.
+ * @param {string} format - The date format.
+ * @param {boolean} hasDay - Indicates if the date has a day component.
+ * @param {boolean} [isEditor=false] - Indicates if the function is used in an editor context.
+ * @returns {Array} - The scale values of the dates.
+ */
+export function getDateScaleValues(dates, format, hasDay, isEditor = false) {
+  let parser;
+  const getDateParsed = parser => dates.map(d => parser(d));
+
+  switch (true) {
+    case ["%Y"].includes(format):
+      return dates.map(d => +d);
+
+    case ["Q*"].includes(format): {
+      const indexQ = dates[0].indexOf("Q");
+      return dates.map(d => +(d.replace(/Q([1-4])/g, "").trim()) + ((+d[indexQ + 1]) - 1) * 0.25);
+    }
+
+    case ["%Y-%y", "%Y/%y"].includes(format):
+      return dates.map(d => +d.slice(0, 4));
+
+    case ["%b", "%B"].includes(format):
+      parser = timeParse(!isEditor ? format : "%b");
+      return getDateParsed(parser).map(d => d.getMonth());
+
+    case !hasDay:
+      parser = timeParse(!isEditor ? format : "%b %Y");
+      return getDateParsed(parser).map(d => d.getFullYear() + d.getMonth() / 12);
+
+    default:
+      parser = timeParse(format);
+      return getDateParsed(parser);
+  }
+}
+
+/**
+ * Converts numeric date values to text.
+ *
+ * @param {number} value - The numeric date value.
+ * @param {string} format - The date format.
+ * @param {boolean} hasDay - Indicates if the date has a day component.
+ * @returns {string|null} - The formatted date text.
+ */
+export function dateNumToTxt(value, format, hasDay) {
+  const year = value.toString().split(".")[0];
+  const deci = value % 1; // Get decimal portion
+  let date, month, toText;
+
+  switch (true) {
+    case ["%Y"].includes(format):
+      return value.toString();
+
+    case ["Q*"].includes(format): {
+      const quad = (value % 1) * 4 + 1;
+      return "Q" + quad + " " + year;
+    }
+
+    case ["%Y-%y", "%Y/%y"].includes(format):
+      return value + "-" + (value + 1).toString().slice(-2);
+
+    case ["%b", "%B"].includes(format):
+      date = new Date(2017, value);
+      toText = timeFormat("%b");
+      return toText(date);
+
+    case !hasDay:
+      month = Math.round(parseFloat(deci * 12));
+      date = new Date(year, month || 0);
+      toText = timeFormat("%b %Y");
+      return toText(date);
+
+    default:
+      return null;
+  }
+}
+
+/**
+ * Determines the appropriate date format for a given domain.
+ *
+ * @param {Array} domain - The date domain.
+ * @returns {string} - The appropriate date format.
+ */
+export function getDateTextFormat(domain) {
+  const diffYear = domain[1].getFullYear() - domain[0].getFullYear();
+  const diffMonth = domain[1].getMonth() - domain[0].getMonth();
+  const diffDay = domain[1].getDate() - domain[0].getDate();
+  const diffHour = domain[1].getHours() - domain[0].getHours();
+
+  switch (true) {
+    case diffYear > 4:
+      return "%Y";
+    case diffYear > 0:
+      return "%b %Y";
+    case diffMonth > 4:
+      return "%b";
+    case diffMonth > 0:
+      return "%d %b";
+    case diffDay > 0:
+      return "%d %I%p";
+    case diffHour > 0:
+      return "%H:%M";
+    default:
+      console.error("A new time format is required!");
+      return "";
+  }
+}
+
+export function getStringFormatting(data) {
+
+    return {
+      hasRepeat: hasDuplicates(data),
+      longest: getLongestStringLength(data),
+      scale : determineD3ScaleType(data)
+    };
+
+}
+
+/**
+ * Returns the length of the longest string in an array of strings.
+ *
+ * @param {string[]} array - The array of strings.
+ * @returns {number} - The length of the longest string in the array.
+ */
+function getLongestStringLength(array) {
+    if (array.length === 0) {
+        return 0;
+    }
+
+    let maxLength = 0;
+
+    for (const str of array) {
+        if (str.length > maxLength) {
+            maxLength = str.length;
+        }
+    }
+
+    return maxLength;
+}
+
+/**
+ * Checks if an array of strings contains duplicates.
+ *
+ * @param {string[]} array - The array of strings.
+ * @returns {boolean} - True if the array contains duplicates, false otherwise.
+ */
+function hasDuplicates(array) {
+    const seen = new Set();
+
+    for (const item of array) {
+        if (seen.has(item)) {
+            return true;
+        }
+        seen.add(item);
+    }
+
+    return false;
+}
+
+/**
+ * Determines the appropriate D3 scale type based on the provided dataset.
+ * @param {Array} data - The dataset to be analyzed.
+ * @returns {string} - The determined scale type or an error message.
+ */
+export function determineD3ScaleType(data) {
+  // Check if the data is a valid non-empty array
+  if (!Array.isArray(data) || data.length === 0) {
+    return 'Invalid data';
+  }
+
+  const sample = data[0];
+  const allNumbers = data.every(d => typeof d === 'number');
+  const allDates = data.every(d => d instanceof Date);
+  const hasNegative = data.some(d => d < 0);
+  const distinctValues = new Set(data).size;
+
+  // Rule for Time Data
+  if (allDates) {
+    return "scaleTime";
+  }
+
+  // Rule for Numerical Data
+  if (allNumbers) {
+    // Log scale cannot handle negative values
+    if (hasNegative) {
+      return "scaleLinear";
+    }
+    
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+
+    // Use log scale for wide range values
+    if (max / min > 1000) {
+      return "scaleLog";
+    }
+    
+    // Use linear scale as a default for numerical data
+    return "scaleLinear";
+  }
+
+  // Rule for Categorical Data
+  if (typeof sample === 'string' || !allNumbers) {
+    // If the dataset is small and distinct, use ordinal scale
+    if (distinctValues === data.length) {
+      return "scaleOrdinal";
+    }
+    
+    // Use band scale for ordinal data with repetition
+    return "scaleBand";
+  }
+
+  // Fallback if data type is not recognized
+  return "Unknown scale type";
+}
+
+
+
+/**
+ * Sorts a JSON array based on a specified column order.
+ * 
+ * @param {Array<Object>} jsonArray - The array of JSON objects to be sorted.
+ * @param {Array<string>} columnOrder - The array of column names defining the desired order.
+ * @returns {Array<Object>} - The sorted JSON array with updated index values, or the original array if the validation fails.
+ */
+export function sortJsonByColumnOrder(jsonArray, columnOrder) {
+  // Check if the number of items matches
+  if (jsonArray.length !== columnOrder.length) {
+    return jsonArray;
+  }
+
+  // Extract columns from jsonArray
+  const jsonColumns = jsonArray.map(item => item.column);
+
+  // Check if columns match the columnOrder exactly
+  const columnsMatch = columnOrder.every(column => jsonColumns.includes(column));
+
+  // If columns do not match, return the original jsonArray
+  if (!columnsMatch) {
+    return jsonArray;
+  }
+
+  // Sort jsonArray based on the columnOrder
+  const sortedArray = columnOrder.map(columnName => {
+    return jsonArray.find(item => item.column === columnName);
+  });
+
+  // Update the index values in the sorted array
+  sortedArray.forEach((item, index) => {
+    item.index = index;
+  });
+
+  // Sort the array by the index key in ascending order
+  sortedArray.sort((a, b) => a.index - b.index);
+
+  // Return the sorted array
+  return sortedArray;
+}
+
+/**
+ * Gets the data types for each column.
+ *
+ * @param {Array} cols - The columns array.
+ * @returns {Array} - An array of objects containing data types and formatters for each column.
+ */
+const getDataTypesForColumns = async (cols) => {
+  return cols.map((col, columnIndex) => {
+    let dataTypesAndFormats = getDataTypeAnalysis(col.slice(1), "body");
+    let listOfDataTypes = dataTypesAndFormats.types;
+
+    // If this is not the first column, remove date from the possible types
+    // To avoid misinterpreting a numerical value that looks like a date, e.g., 1998
+    if (columnIndex > 0) {
+      listOfDataTypes = listOfDataTypes.filter(dataType => dataType !== "date");
+    }
+
+    // Initialize the format array
+    let format = [];
+
+    // Loop through listOfDataTypes and add an object with the probableDataType and its formatter
+    listOfDataTypes.forEach(dataType => {
+      let formatter = { status: false };
+
+      if (dataType === 'number') {
+        formatter = getNumberFormatting(col.slice(1));
+      }
+
+      if (dataType === 'string') {
+        formatter = getStringFormatting(col.slice(1));
+      }
+
+      if (dataType === 'date') {
+        formatter = getDateFormatting(col.slice(1));
+      }
+
+      format.push({ type: dataType, format: { ...formatter } });
+    });
+
+    // Return all possible types and the format array
+    return { list: listOfDataTypes, format };
+  });
+};
+
+
+
+/**
+ * Converts a JSON array of objects to an array of rows.
+ *
+ * @param {Array} jsonData - The input JSON data.
+ * @returns {Array} - An array of rows where the first row contains column names.
+ */
+function convertJSONToArrayOfRows(jsonData) {
+    // Check if jsonData is not empty and is an array
+    if (!jsonData || !Array.isArray(jsonData) || jsonData.length === 0) return [];
+
+    // Extract column names from the first object (assuming all objects have the same keys)
+    const columnNames = Object.keys(jsonData[0]);
+
+    // Create an array of rows, including the column names as the first row
+    const rows = jsonData.map(obj => 
+        columnNames.map(colName => obj[colName])
+    );
+
+    // Optionally, add column names as the first row
+    rows.unshift(columnNames);
+
+    return rows;
+}
+
+/**
+ * Swaps the rows and columns of a 2D array.
+ *
+ * @param {Array} arr - The input 2D array.
+ * @returns {Array} - The transposed 2D array.
+ */
+function swapArray(arr) {
+    return arr[0].map((col, i) => arr.map(row => row[i]));
+}
