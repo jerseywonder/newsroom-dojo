@@ -23,6 +23,8 @@ You can install the package via npm:
 npm install newsroom-dojo
 ```
 
+Load the specific helper functions you want to use (A full list will be coming very soon).
+
 ## Usage
 
 ```bash
@@ -34,7 +36,7 @@ import { contains, getJson } from 'newsroom-dojo/dist/index.js'
 
 ### Schema function
 
-Give it some json data and it generates a schema containing properties names and data types. 
+Give it some json data and it generates a schema containing property names and data types. 
 
 ```bash
 import { schema } from 'newsroom-dojo/dist/schema/index.js'
