@@ -5,6 +5,23 @@ import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 
 export default [
+    {
+    input: 'src/index.js',
+    output: [
+      {
+        file: 'dist/index.js',
+        format: 'es',
+        name: 'dojo'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
+  },
   {
     input: 'src/arrays/index.js',
     output: [
@@ -29,6 +46,40 @@ export default [
         file: 'dist/schema/index.js',
         format: 'es',
         name: 'schema'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
+  },  
+  {
+    input: 'src/maths/index.js',
+    output: [
+      {
+        file: 'dist/maths/index.js',
+        format: 'es',
+        name: 'maths'
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      babel({ babelHelpers: 'bundled' }),
+      terser(),
+      json()
+    ]
+  },
+  {
+    input: 'src/toolbelt/index.js',
+    output: [
+      {
+        file: 'dist/toolbelt/index.js',
+        format: 'es',
+        name: 'toolbelt'
       }
     ],
     plugins: [
