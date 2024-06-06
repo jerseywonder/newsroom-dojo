@@ -20,12 +20,12 @@
 You can install the package via npm:
 
 ```bash
-npm install @jerseywonder/newsroom-dojo
+npm install newsroom-dojo
 
 ## schema-functions
 
-import { schema } from '@jerseywonder/newsroom-dojo/dist/schema/index.js';
-import { contains, getJson } from '@jerseywonder/newsroom-dojo/dist/index.js'
+import { schema } from 'newsroom-dojo/dist/schema/index.js';
+import { contains, getJson } from 'newsroom-dojo/dist/index.js'
 
 // Example usage
 
