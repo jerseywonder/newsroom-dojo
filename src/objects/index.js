@@ -24,3 +24,25 @@ export function sortObjectByKey(object, keys) {
 
     return sortedObject;
 }
+
+/**
+ * Merges properties from the source object into the target object.
+ * If a property in the target object is not an object, it is overwritten by the source object property.
+ * If a property in the source object is an object, the function is called recursively.
+ *
+ * @param {Object} to - The target object.
+ * @param {Object} from - The source object.
+ * @returns {Object} - The merged object.
+ */
+export function merge(to, from) {
+    for (const n in from) {
+        if (typeof to[n] != 'object') {
+            // Overwrite the target property if it's not an object
+            to[n] = from[n];
+        } else if (typeof from[n] == 'object') {
+            // Recursively merge if the source property is an object
+            to[n] = merge(to[n], from[n]);
+        }
+    }
+    return to;
+};
