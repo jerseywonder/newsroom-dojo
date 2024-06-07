@@ -1,6 +1,6 @@
 {
   "name": "newsroom-dojo",
-  "version": "1.1.8",
+  "version": "1.2.0",
   "description": "A collection of helpful utility functions for newsroom projects.",
   "main": "dist/index.js",
   "module": "dist/index.js",
