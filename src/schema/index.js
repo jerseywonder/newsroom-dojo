@@ -27,8 +27,6 @@ export async function schema(data) {
     // Analyze data types for columns ... This is where the magic happens
     dataTableDraw.type = await getDataTypesForColumns(cols);
 
-    console.log(dataTableDraw)
-
     return processJsonData({
         ...dataTableRaw,
         ...dataTableDraw
