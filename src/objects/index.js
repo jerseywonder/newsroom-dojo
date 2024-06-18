@@ -102,6 +102,7 @@ export function filterWithFuzzyMatch(arr, query, value) {
       const itemValue = item[value].toLowerCase();
       const distance = levenshtein(itemValue, lowerCaseQuery);
       const threshold = Math.max(itemValue.length, lowerCaseQuery.length) / 3; // Define a threshold
+      item.distance = distance
 
       // Check for exact match or close match using Levenshtein distance
       return itemValue.includes(lowerCaseQuery) || distance <= threshold;
