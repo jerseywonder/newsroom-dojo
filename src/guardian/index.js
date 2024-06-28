@@ -45,3 +45,63 @@ export function resizeIframe(elem="#gv-atom") {
     });
   }
 }
+
+export function mobileCheck() {
+  if (typeof navigator !== 'undefined') {
+    const regex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
+    const a = navigator.userAgent || navigator.vendor || window.opera;
+    return regex.test(a.substr(0, 4)) || /iPad/i.test(navigator.userAgent);
+  }
+  return false;
+}
+
+export function checkIOS() {
+    if (typeof navigator !== 'undefined') {
+      const iDevices = [
+        'iPad Simulator',
+        'iPhone Simulator',
+        'iPod Simulator',
+        'iPad',
+        'iPhone',
+        'iPod'
+      ];
+  
+      return !!navigator.platform && iDevices.includes(navigator.platform);
+    }
+    return false;
+  
+}
+
+export function platformCheck() {
+
+  let results = {};
+
+  if (typeof navigator !== 'undefined') {
+    results.platform = navigator.platform.toLowerCase();
+    results.userAgent = navigator.userAgent.toLowerCase();
+    results.isMobile = mobileCheck();
+  
+    results.app = {
+      isApp: window.location.origin === "file://" || window.location.origin === null || window.location.origin === "https://mobile.guardianapis.com",
+      isIos: checkIOS(),
+      isAndroid: /(android)/i.test(navigator.userAgent),
+      isiPhone: /(iPhone)/i.test(navigator.platform),
+      isiPad: /iPad/i.test(navigator.userAgent)
+    };
+  } else {
+    console.warn('Navigator is not defined. Running in a non-browser environment.');
+    results.platform = 'unknown';
+    results.userAgent = 'unknown';
+    results.isMobile = false;
+    results.app = {
+      isApp: false,
+      isIos: false,
+      isAndroid: false,
+      isiPhone: false,
+      isiPad: false
+    };
+  }
+
+  return results;
+}
+
