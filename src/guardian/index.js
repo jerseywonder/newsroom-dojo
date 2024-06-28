@@ -46,7 +46,7 @@ export function resizeIframe(elem="#gv-atom") {
   }
 }
 
-export function mobileCheck() {
+export function checkMobile() {
   if (typeof navigator !== 'undefined') {
     const regex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
     const a = navigator.userAgent || navigator.vendor || window.opera;
@@ -72,17 +72,47 @@ export function checkIOS() {
   
 }
 
-export function platformCheck() {
+export function checkApp() {
+  let result = false;
+  // check if it's inside an iframe
+  let embedded = (window.location != window.parent.location)
+
+  if (embedded) {
+    if (window.location.ancestorOrigins[0] == 'null') {
+      result = true
+      }
+    else {
+      result = false
+    }
+  }
+
+  // Check if an atom embed - note I haven't tested this yet because iOS app to console output is annoying
+  
+  else {
+    result = window.location.origin === "file://" || window.location.origin === null || window.location.origin === "https://mobile.guardianapis.com";
+  }
+  return result;
+}
+
+export function checkPlatform() {
+  // console.log("window.location",window.location)
+  // console.log("parent.location", window.parent)
+  // console.log("document.referrer", document.referrer)
+  // console.log("checkApp", checkApp())
+  // Check if within iframe
+
+  let embedded = (window.location != window.parent.location)
+  console.log("embedded",embedded)
 
   let results = {};
 
   if (typeof navigator !== 'undefined') {
     results.platform = navigator.platform.toLowerCase();
     results.userAgent = navigator.userAgent.toLowerCase();
-    results.isMobile = mobileCheck();
+    results.isMobile = checkMobile();
   
     results.app = {
-      isApp: window.location.origin === "file://" || window.location.origin === null || window.location.origin === "https://mobile.guardianapis.com",
+      isApp: checkApp(),
       isIos: checkIOS(),
       isAndroid: /(android)/i.test(navigator.userAgent),
       isiPhone: /(iPhone)/i.test(navigator.platform),
