@@ -46,6 +46,14 @@ export function resizeIframe(elem="#gv-atom") {
   }
 }
 
+export function getBrowser() {
+  let result = undefined;
+  if (typeof navigator !== 'undefined') { 
+    result = navigator.userAgent.toLowerCase();
+  }
+  return result;
+}
+
 export function checkMobile() {
   if (typeof navigator !== 'undefined') {
     const regex = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
@@ -73,19 +81,33 @@ export function checkIOS() {
 }
 
 export function checkApp() {
+  
+  let browser = getBrowser();
+  console.log('browser', browser);
   let result = false;
   // check if it's inside an iframe
   let embedded = (window.location != window.parent.location)
 
   if (embedded) {
-    if (window.location.ancestorOrigins[0] == 'null') {
-      result = true
-      }
-    else {
-      result = false
-    }
-  }
 
+    // iframeMessenger.getLocation(loc => console.log(loc));
+
+    // window.location.ancestorOrigins doesn't work in Firefox
+
+    if (window.location.ancestorOrigins) {
+      if (window.location.ancestorOrigins[0] == 'null') {
+        result = true
+        }
+      else {
+        result = false
+      }
+    }
+    else {
+      return false
+    }
+
+  }
+  
   // Check if an atom embed - note I haven't tested this yet because iOS app to console output is annoying
   
   else {
