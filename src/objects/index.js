@@ -93,30 +93,30 @@ function levenshtein(a, b) {
  * @returns {Array<Object>} - The filtered array of objects.
  */
 export function filterWithFuzzyMatch(arr, query, value) {
-  let result = [];
 
-  if (query.length > 2) {
-    const lowerCaseQuery = query.toLowerCase();
+    let result = [];
 
-    result = arr.filter(item => {
-      const itemValue = item[value].toLowerCase();
-      const distance = levenshtein(itemValue, lowerCaseQuery);
-      const threshold = Math.max(itemValue.length, lowerCaseQuery.length) / 3; // Define a threshold
-      item.distance = distance
+    if (query.length > 2) {
+        const lowerCaseQuery = query.toLowerCase();
 
-      // Check for exact match or close match using Levenshtein distance
-      return itemValue.includes(lowerCaseQuery) || distance <= threshold;
-    });
+        result = arr.filter(item => {
+          const itemValue = item[value].toLowerCase();
+          const distance = levenshtein(itemValue, lowerCaseQuery);
+          const threshold = Math.max(itemValue.length, lowerCaseQuery.length) / 3; // Define a threshold
 
-    result = result.sort((a, b) => {
-      const aValue = a[value].toLowerCase();
-      const bValue = b[value].toLowerCase();
-      const aDistance = levenshtein(aValue, lowerCaseQuery);
-      const bDistance = levenshtein(bValue, lowerCaseQuery);
+          // Check for exact match or close match using Levenshtein distance
+          return itemValue.includes(lowerCaseQuery) || distance <= threshold;
+        });
 
-      return aDistance - bDistance;
-    });
-  }
+        result = result.sort((a, b) => {
+          const aValue = a[value].toLowerCase();
+          const bValue = b[value].toLowerCase();
+          const aDistance = levenshtein(aValue, lowerCaseQuery);
+          const bDistance = levenshtein(bValue, lowerCaseQuery);
 
-  return result;
+          return aDistance - bDistance;
+        });
+    }
+
+    return result;
 }
