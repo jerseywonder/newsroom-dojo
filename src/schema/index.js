@@ -162,6 +162,37 @@ function arithmeticSequenceCheck(arr) {
   return true;
 }
 
+/**
+ * Checks if the numbers in an array are part of a strictly increasing or strictly decreasing sequence.
+ * 
+ * @param {number[]} arr - The array of numbers to check.
+ * @returns {boolean} - Returns true if the numbers are equally spaced apart, false otherwise.
+ */
+export function checkSequence(arr) {
+  if (arr.length < 2) {
+    return 'Array must have at least two elements';
+  }
+
+  let isIncreasing = true;
+  let isDecreasing = true;
+
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] <= arr[i - 1]) {
+      isIncreasing = false;
+    }
+    if (arr[i] >= arr[i - 1]) {
+      isDecreasing = false;
+    }
+  }
+
+  if (isIncreasing) {
+    return true
+  } else if (isDecreasing) {
+    return true
+  } else {
+    return false
+  }
+}
 
 export function getNumberFormatting(data) {
     
@@ -172,7 +203,8 @@ export function getNumberFormatting(data) {
     max : Math.max(...values),
     scale : determineD3ScaleType(values),
     hasEmptyValues : values.length == data.length ? false : true,
-    sequential : arithmeticSequenceCheck(values)
+    sequential : arithmeticSequenceCheck(values),
+    strictly : checkSequence(values)
   };
 }
 
